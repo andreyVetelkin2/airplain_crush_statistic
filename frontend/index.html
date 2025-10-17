@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогнозирование безопасности АТС</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🛫 Система прогнозирования безопасности авиационных транспортных систем</h1>
+            <p class="subtitle">На основе моделей системной динамики</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Панель управления -->
+            <div class="control-panel">
+                <h2>Параметры симуляции</h2>
+                
+                <div class="section">
+                    <h3>Основные параметры</h3>
+                    <div class="form-group">
+                        <label for="years">Количество лет прогноза:</label>
+                        <input type="number" id="years" min="1" max="50" value="10">
+                        <span class="hint">1-50 лет</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dt">Шаг интегрирования:</label>
+                        <input type="number" id="dt" min="0.01" max="1" step="0.01" value="0.1">
+                        <span class="hint">0.01-1.0</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Внешние факторы (множители)</h3>
+                    <p class="info-text">Значение 1.0 = базовый сценарий. Увеличьте или уменьшите для экспериментов.</p>
+                    
+                    <div class="form-group">
+                        <label for="F1">F1 - Лётный стаж пилотов:</label>
+                        <input type="number" id="F1" min="0.1" max="5" step="0.1" value="1.0">
+                        <span class="current-value">1.0</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="F2">F2 - Доля иностранных судов:</label>
+                        <input type="number" id="F2" min="0.1" max="5" step="0.1" value="1.0">
+                        <span class="current-value">1.0</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="F3">F3 - Выработка ресурса:</label>
+                        <input type="number" id="F3" min="0.1" max="5" step="0.1" value="1.0">
+                        <span class="current-value">1.0</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="F4">F4 - Стоимость топлива:</label>
+                        <input type="number" id="F4" min="0.1" max="5" step="0.1" value="1.0">
+                        <span class="current-value">1.0</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="F5">F5 - Контроль государства (НПА):</label>
+                        <input type="number" id="F5" min="0.1" max="5" step="0.1" value="1.0">
+                        <span class="current-value">1.0</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Быстрые сценарии</h3>
+                    <div class="scenario-buttons">
+                        <button class="btn btn-secondary" onclick="setScenario('base')">Базовый</button>
+                        <button class="btn btn-secondary" onclick="setScenario('control_increase')">↑ Контроль</button>
+                        <button class="btn btn-secondary" onclick="setScenario('repeat_increase')">↑ Повторяемость</button>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="runSimulation()">
+                        <span class="btn-text">Запустить симуляцию</span>
+                        <span class="spinner" style="display: none;">⏳</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetParams()">Сбросить</button>
+                </div>
+
+                <div id="status" class="status"></div>
+            </div>
+
+            <!-- Область визуализации -->
+            <div class="visualization-panel">
+                <h2>Результаты прогнозирования</h2>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('disasters')">Количество катастроф (X2)</button>
+                    <button class="tab-btn" onclick="switchTab('all')">Все переменные</button>
+                    <button class="tab-btn" onclick="switchTab('comparison')">Сравнение</button>
+                </div>
+
+                <div id="disasters-tab" class="tab-content active">
+                    <div class="chart-container">
+                        <canvas id="disastersChart"></canvas>
+                    </div>
+                    <div class="chart-info">
+                        <p><strong>X2(t) - Количество катастроф</strong></p>
+                        <p>Основной показатель безопасности АТС. График показывает прогнозируемое изменение количества авиационных катастроф во времени.</p>
+                    </div>
+                </div>
+
+                <div id="all-tab" class="tab-content">
+                    <div class="chart-container">
+                        <canvas id="allVariablesChart"></canvas>
+                    </div>
+                    <div class="variables-legend">
+                        <h4>Переменные системы:</h4>
+                        <ul>
+                            <li><strong>X1</strong> - Нарушения инструкций пилотами</li>
+                            <li><strong>X2</strong> - Количество катастроф</li>
+                            <li><strong>X3</strong> - Коэффициент повторяемости происшествий</li>
+                            <li><strong>X4</strong> - Доля частных судов</li>
+                            <li><strong>X5</strong> - Метеорологические службы</li>
+                            <li><strong>X6</strong> - Контроль контрафакта</li>
+                            <li><strong>X7</strong> - Возраст воздушных судов</li>
+                            <li><strong>X8</strong> - Квалификация персонала</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="comparison-tab" class="tab-content">
+                    <div class="comparison-controls">
+                        <button class="btn btn-secondary" onclick="saveCurrentForComparison()">Сохранить текущий результат</button>
+                        <button class="btn btn-secondary" onclick="clearComparison()">Очистить</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                    <div class="chart-info">
+                        <p>Сравните результаты разных сценариев. Запустите симуляцию, нажмите "Сохранить", измените параметры и запустите снова.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Модель основана на методах системной динамики и решается методом Рунге-Кутта 4-го порядка</p>
+            <p>Источник: Н. А. Асеев, В.А. Кушников, А. С. Богомолов, А.Ю. Спиридонов</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
+
