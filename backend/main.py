@@ -17,7 +17,7 @@ BACKEND_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BACKEND_DIR.parent
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
 
-from model import AviationSafetyModel
+from .model import AviationSafetyModel
 
 app = FastAPI(
     title="Aviation Safety Forecasting System",
