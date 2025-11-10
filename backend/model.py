@@ -42,27 +42,55 @@ class AviationSafetyModel:
             1.0   # X8 - квалификация персонала
         ])
     
-    def external_factors(self, t: float, factor_multipliers: Dict[str, float]) -> Tuple[float, float, float, float, float]:
+    def external_factors(self, t: float, factor_multipliers: Dict[str, float], 
+                        polynomial_coefs: Dict[str, list] = None) -> Tuple[float, float, float, float, float]:
         """
         Вычисление внешних факторов в зависимости от времени
         
         Args:
             t: время (годы от 2011)
             factor_multipliers: множители для изменения внешних факторов
+            polynomial_coefs: коэффициенты полиномов для каждого фактора (опционально)
         
         Returns:
             F1, F2, F3, F4, F5
         """
-        # Базовые значения внешних факторов (из статьи)
-        F1 = (1.0 - 0.02 * t) * factor_multipliers.get('F1', 1.0)  # лётный стаж
-        F2 = (1.0 + 0.03 * t) * factor_multipliers.get('F2', 1.0)  # доля иностранных судов
-        F3 = (1.0 + 0.01 * t) * factor_multipliers.get('F3', 1.0)  # выработка ресурса
-        F4 = (1.0 + 0.05 * t) * factor_multipliers.get('F4', 1.0)  # стоимость топлива
-        F5 = (1.0 + 0.04 * t) * factor_multipliers.get('F5', 1.0)  # НПА (контроль государства)
+        if polynomial_coefs:
+            # Используем полиномиальные коэффициенты если они предоставлены
+            # F_i = a*t^3 + b*t^2 + c*t + d
+            F1 = self._evaluate_polynomial(t, polynomial_coefs.get('F1', [0, 0, -0.02, 1.0]))
+            F2 = self._evaluate_polynomial(t, polynomial_coefs.get('F2', [0, 0, 0.03, 1.0]))
+            F3 = self._evaluate_polynomial(t, polynomial_coefs.get('F3', [0, 0, 0.01, 1.0]))
+            F4 = self._evaluate_polynomial(t, polynomial_coefs.get('F4', [0, 0, 0.05, 1.0]))
+            F5 = self._evaluate_polynomial(t, polynomial_coefs.get('F5', [0, 0, 0.04, 1.0]))
+        else:
+            # Базовые значения внешних факторов (из статьи)
+            F1 = (1.0 - 0.02 * t) * factor_multipliers.get('F1', 1.0)  # лётный стаж
+            F2 = (1.0 + 0.03 * t) * factor_multipliers.get('F2', 1.0)  # доля иностранных судов
+            F3 = (1.0 + 0.01 * t) * factor_multipliers.get('F3', 1.0)  # выработка ресурса
+            F4 = (1.0 + 0.05 * t) * factor_multipliers.get('F4', 1.0)  # стоимость топлива
+            F5 = (1.0 + 0.04 * t) * factor_multipliers.get('F5', 1.0)  # НПА (контроль государства)
         
         return F1, F2, F3, F4, F5
     
-    def system_equations(self, X: np.ndarray, t: float, factor_multipliers: Dict[str, float]) -> np.ndarray:
+    def _evaluate_polynomial(self, t: float, coefs: list) -> float:
+        """
+        Вычисляет значение полинома 3-й степени
+        
+        Args:
+            t: переменная
+            coefs: список коэффициентов [a, b, c, d] для a*t^3 + b*t^2 + c*t + d
+            
+        Returns:
+            значение полинома
+        """
+        if len(coefs) != 4:
+            coefs = [0, 0, 0, 1.0]
+        a, b, c, d = coefs
+        return a * t**3 + b * t**2 + c * t + d
+    
+    def system_equations(self, X: np.ndarray, t: float, factor_multipliers: Dict[str, float],
+                        polynomial_coefs: Dict[str, list] = None) -> np.ndarray:
         """
         Система дифференциальных уравнений (на основе уравнений из статьи)
         
@@ -70,12 +98,13 @@ class AviationSafetyModel:
             X: вектор переменных [X1, X2, X3, X4, X5, X6, X7, X8]
             t: время
             factor_multipliers: множители для внешних факторов
+            polynomial_coefs: коэффициенты полиномов для факторов (опционально)
         
         Returns:
             dX/dt - производные переменных
         """
         X1, X2, X3, X4, X5, X6, X7, X8 = X
-        F1, F2, F3, F4, F5 = self.external_factors(t, factor_multipliers)
+        F1, F2, F3, F4, F5 = self.external_factors(t, factor_multipliers, polynomial_coefs)
         
         # Система дифференциальных уравнений (упрощённая версия на основе статьи)
         dX = np.zeros(8)
@@ -126,7 +155,8 @@ class AviationSafetyModel:
     
     def runge_kutta_4(self, t_start: float, t_end: float, dt: float, 
                       factor_multipliers: Dict[str, float], 
-                      initial_conditions: np.ndarray = None) -> Tuple[np.ndarray, np.ndarray]:
+                      initial_conditions: np.ndarray = None,
+                      polynomial_coefs: Dict[str, list] = None) -> Tuple[np.ndarray, np.ndarray]:
         """
         Решение системы дифференциальных уравнений методом Рунге-Кутта 4-го порядка
         
@@ -136,6 +166,7 @@ class AviationSafetyModel:
             dt: шаг интегрирования
             factor_multipliers: множители для внешних факторов
             initial_conditions: начальные условия (если None, используются стандартные)
+            polynomial_coefs: коэффициенты полиномов для факторов (опционально)
         
         Returns:
             t_values: массив значений времени
@@ -158,10 +189,10 @@ class AviationSafetyModel:
             t_current = t_values[i]
             
             # Коэффициенты Рунге-Кутта
-            k1 = dt * self.system_equations(X_current, t_current, factor_multipliers)
-            k2 = dt * self.system_equations(X_current + 0.5 * k1, t_current + 0.5 * dt, factor_multipliers)
-            k3 = dt * self.system_equations(X_current + 0.5 * k2, t_current + 0.5 * dt, factor_multipliers)
-            k4 = dt * self.system_equations(X_current + k3, t_current + dt, factor_multipliers)
+            k1 = dt * self.system_equations(X_current, t_current, factor_multipliers, polynomial_coefs)
+            k2 = dt * self.system_equations(X_current + 0.5 * k1, t_current + 0.5 * dt, factor_multipliers, polynomial_coefs)
+            k3 = dt * self.system_equations(X_current + 0.5 * k2, t_current + 0.5 * dt, factor_multipliers, polynomial_coefs)
+            k4 = dt * self.system_equations(X_current + k3, t_current + dt, factor_multipliers, polynomial_coefs)
             
             # Новое значение
             X_values[i + 1] = X_current + (k1 + 2*k2 + 2*k3 + k4) / 6
@@ -173,7 +204,8 @@ class AviationSafetyModel:
     
     def simulate(self, years: int = 10, dt: float = 0.1, 
                  factor_multipliers: Dict[str, float] = None,
-                 initial_conditions: np.ndarray = None) -> Dict:
+                 initial_conditions: np.ndarray = None,
+                 polynomial_coefs: Dict[str, list] = None) -> Dict:
         """
         Запуск симуляции
         
@@ -182,6 +214,7 @@ class AviationSafetyModel:
             dt: шаг интегрирования
             factor_multipliers: множители для внешних факторов
             initial_conditions: начальные условия
+            polynomial_coefs: коэффициенты полиномов для факторов (опционально)
         
         Returns:
             Словарь с результатами симуляции
@@ -189,7 +222,8 @@ class AviationSafetyModel:
         if factor_multipliers is None:
             factor_multipliers = {}
         
-        t_values, X_values = self.runge_kutta_4(0, years, dt, factor_multipliers, initial_conditions)
+        t_values, X_values = self.runge_kutta_4(0, years, dt, factor_multipliers, 
+                                                 initial_conditions, polynomial_coefs)
         
         return {
             'time': t_values.tolist(),

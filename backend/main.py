@@ -2,7 +2,7 @@
 REST API для веб-сервиса прогнозирования безопасности АТС
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -11,13 +11,26 @@ from typing import Dict, Optional, List
 import numpy as np
 import os
 from pathlib import Path
+import json
+import matplotlib
+matplotlib.use('Agg')  # Используем non-GUI бэкенд
+import matplotlib.pyplot as plt
+import io
+import base64
 
 # Определяем корневую директорию проекта
 BACKEND_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BACKEND_DIR.parent
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
 
-from .model import AviationSafetyModel
+# Добавляем путь к корню проекта для импортов
+import sys
+sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from backend.model import AviationSafetyModel
+except ImportError:
+    from model import AviationSafetyModel
 
 app = FastAPI(
     title="Aviation Safety Forecasting System",
@@ -213,6 +226,241 @@ async def run_simulation(request: SimulationRequest):
 async def health_check():
     """Проверка работоспособности API"""
     return {"status": "ok", "message": "API работает нормально"}
+
+
+@app.post("/calculate/")
+async def calculate(
+    startValues: str = Form(...),
+    maxValues: str = Form(...),
+    normValues: str = Form(...),
+    qcoefs: str = Form(...),
+    coefs: str = Form(...),
+    years: int = Form(10)
+):
+    """
+    Endpoint для расчета с новой структурой данных
+    
+    Параметры:
+    - startValues: начальные значения переменных X1-X8
+    - maxValues: максимальные пределы для X1-X8
+    - normValues: нормирующие знаменатели для X1-X8
+    - qcoefs: коэффициенты возмущений F1-F5 (полиномы 3-й степени)
+    - coefs: коэффициенты уравнений связей (полиномы 3-й степени)
+    - years: количество лет для расчёта (по умолчанию 10)
+    """
+    try:
+        # Парсим JSON данные
+        start_values = json.loads(startValues)
+        max_values = json.loads(maxValues)
+        norm_values = json.loads(normValues)
+        q_coefs = json.loads(qcoefs)
+        equation_coefs = json.loads(coefs)
+        
+        # Создаем модель и выполняем расчет
+        model = AviationSafetyModel()
+        
+        # Подготавливаем полиномиальные коэффициенты для внешних факторов
+        polynomial_coefs = {}
+        for i in range(1, 6):
+            polynomial_coefs[f'F{i}'] = q_coefs[i-1]
+        
+        # Запускаем симуляцию с полиномиальными коэффициентами
+        results = model.simulate(
+            years=years,
+            dt=0.1,
+            factor_multipliers={},
+            initial_conditions=np.array(start_values),
+            polynomial_coefs=polynomial_coefs
+        )
+        
+        # Генерируем машинные графики
+        image1 = generate_machine_coordinates_linear(results)
+        image2 = generate_machine_coordinates_radar(results)
+        
+        return {
+            "image1": image1,  # Линейный график машинных координат от времени
+            "image2": image2,  # Объединенные радиальные диаграммы (6 на одном рисунке)
+            "status": "success"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка при выполнении расчета: {str(e)}")
+
+
+def normalize_to_machine_coordinates(values):
+    """
+    Нормализует значения к машинным координатам [0, 1]
+    
+    Args:
+        values: массив значений
+        
+    Returns:
+        нормализованный массив
+    """
+    values = np.array(values)
+    min_val = np.min(values)
+    max_val = np.max(values)
+    if max_val - min_val < 1e-10:
+        return np.ones_like(values) * 0.5
+    return (values - min_val) / (max_val - min_val)
+
+
+def generate_machine_coordinates_linear(results: Dict) -> str:
+    """
+    Генерирует линейный график зависимости машинных координат от времени
+    
+    Args:
+        results: словарь с результатами симуляции
+        
+    Returns:
+        base64 строка с изображением
+    """
+    plt.figure(figsize=(14, 8))
+    
+    # Используем реальное время (годы)
+    time = np.array(results['time'])
+    
+    # Все переменные системы
+    variables = [
+        ('X1', 'X1 - Нарушения инструкций', '#1f77b4'),
+        ('X2', 'X2 - Количество катастроф', '#ff0000'),
+        ('X3', 'X3 - Коэфф. повторяемости', '#ff7f0e'),
+        ('X4', 'X4 - Доля частных судов', '#9467bd'),
+        ('X5', 'X5 - Метеослужбы', '#2ca02c'),
+        ('X6', 'X6 - Контроль контрафакта', '#e377c2'),
+        ('X7', 'X7 - Возраст судов', '#7f7f7f'),
+        ('X8', 'X8 - Квалификация', '#17becf')
+    ]
+    
+    # Рисуем график для каждой переменной
+    for var_key, var_name, color in variables:
+        machine_coords = normalize_to_machine_coordinates(results[var_key])
+        plt.plot(time, machine_coords, label=var_name, color=color, linewidth=2.5, alpha=0.8)
+    
+    plt.xlabel('Время (годы)', fontsize=13, fontweight='bold')
+    plt.ylabel('Машинные координаты', fontsize=13, fontweight='bold')
+    plt.title('Зависимость машинных координат от времени', fontsize=15, fontweight='bold', pad=15)
+    
+    # Настройка осей
+    plt.xlim(time[0], time[-1])  # X от 0 до конца расчётов
+    plt.ylim(0, 1)  # Y от 0 до 1
+    plt.yticks(np.arange(0, 1.2, 0.2))
+    
+    # Улучшенная сетка
+    plt.grid(True, alpha=0.3, linestyle='--', linewidth=0.7)
+    
+    # Легенда в два столбца
+    plt.legend(loc='upper left', fontsize=9, ncol=2, framealpha=0.9)
+    
+    plt.tight_layout()
+    
+    # Конвертируем в base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png', dpi=120, bbox_inches='tight', facecolor='white')
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode()
+    plt.close()
+    
+    return image_base64
+
+
+def generate_machine_coordinates_radar(results: Dict) -> str:
+    """
+    Генерирует одно изображение с 6 радиальными диаграммами для координат 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
+    
+    Args:
+        results: словарь с результатами симуляции
+        
+    Returns:
+        base64 строка с изображением
+    """
+    # Используем реальное время
+    time = np.array(results['time'])
+    
+    # Все переменные системы
+    variables = [
+        ('X1', 'X1\nНарушения'),
+        ('X2', 'X2\nКатастрофы'),
+        ('X3', 'X3\nПовтор-ть'),
+        ('X4', 'X4\nЧастные'),
+        ('X5', 'X5\nМетео'),
+        ('X6', 'X6\nКонтроль'),
+        ('X7', 'X7\nВозраст'),
+        ('X8', 'X8\nКвалиф.')
+    ]
+    
+    # Нормализация всех переменных к машинным координатам
+    machine_coords = {}
+    for var_key, _ in variables:
+        machine_coords[var_key] = normalize_to_machine_coordinates(results[var_key])
+    
+    # Координаты для радиальных диаграмм
+    coord_values = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+    
+    # Создаем фигуру с 6 подграфиками (2 ряда x 3 колонки)
+    fig = plt.figure(figsize=(18, 12))
+    
+    for idx, coord_val in enumerate(coord_values):
+        # Вычисляем реальное время для данной координаты
+        target_time = time[0] + coord_val * (time[-1] - time[0])
+        
+        # Находим ближайший индекс для данного времени
+        time_idx = np.argmin(np.abs(time - target_time))
+        actual_time = time[time_idx]
+        
+        # Извлекаем значения всех переменных в этот момент времени
+        values = [machine_coords[var_key][time_idx] for var_key, _ in variables]
+        labels = [var_name for _, var_name in variables]
+        
+        # Количество переменных
+        num_vars = len(labels)
+        
+        # Вычисляем углы для каждой оси
+        angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+        
+        # Замыкаем диаграмму
+        values += values[:1]
+        angles += angles[:1]
+        
+        # Создаем subplot с полярными координатами
+        ax = plt.subplot(2, 3, idx + 1, projection='polar')
+        
+        # Рисуем диаграмму
+        ax.plot(angles, values, 'o-', linewidth=2, color='#1f77b4', markersize=6)
+        ax.fill(angles, values, alpha=0.25, color='#1f77b4')
+        
+        # Устанавливаем метки
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(labels, fontsize=9, fontweight='bold')
+        
+        # Настраиваем радиальную ось от 0 до 1 с шагом 0.2
+        ax.set_ylim(0, 1.0)
+        ax.set_yticks(np.arange(0, 1.2, 0.2))
+        ax.set_yticklabels([f'{val:.1f}' for val in np.arange(0, 1.2, 0.2)], fontsize=7)
+        
+        # Добавляем сетку
+        ax.grid(True, linestyle='--', alpha=0.7)
+        
+        # Заголовок с указанием координаты и времени
+        ax.set_title(f'Координата {coord_val:.1f}\n(t = {actual_time:.2f} лет)', 
+                     fontsize=11, fontweight='bold', pad=10)
+    
+    # Общий заголовок для всей фигуры
+    fig.suptitle('Радиальные диаграммы для машинных координат 0.0, 0.2, 0.4, 0.6, 0.8, 1.0', 
+                 fontsize=16, fontweight='bold', y=0.98)
+    
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
+    
+    # Конвертируем в base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png', dpi=120, bbox_inches='tight', facecolor='white')
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode()
+    plt.close()
+    
+    return image_base64
+
+
 
 
 if __name__ == "__main__":

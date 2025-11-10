@@ -1,0 +1,889 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Нефтеперерабатывающее предприятие</title>
+</head>
+
+<body>
+    <div class="tables">
+        <div class="main-column">
+            <table style="border: 1px solid black;">
+                <caption>Исследуемые показатели</caption>
+                <thead>
+                    <tr>
+                        <th>Название параметра</th>
+                        <th>Значение</th>
+                        <th>Предел</th>
+                        <th>Норм. знаменатель</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Время испарения ОХВ в районе аварии с пов. земли</td>
+                    <td><input type="number" name="" id="L1"></td>
+                    <td><input type="number" name="" id="L1_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L1_norm"></td>
+                </tr>
+                <tr>
+                    <td>Время ликвидации последствий аварии на ХОО</td>
+                    <td><input type="number" name="" id="L2"></td>
+                    <td><input type="number" name="" id="L2_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L2_norm"></td>
+                </tr>
+                <tr>
+                    <td>Площадь заражения в результате аварии</td>
+                    <td><input type="number" name="" id="L3"></td>
+                    <td><input type="number" name="" id="L3_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L3_norm"></td>
+                </tr>
+                <tr>
+                    <td>Время подхода первичного/вторичного облака к НП</td>
+                    <td><input type="number" name="" id="L4"></td>
+                    <td><input type="number" name="" id="L4_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L4_norm"></td>
+                </tr>
+                <tr>
+                    <td>Потери от первичного облака</td>
+                    <td><input type="number" name="" id="L5"></td>
+                    <td><input type="number" name="" id="L5_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L5_norm"></td>
+                </tr>
+                <tr>
+                    <td>Потери от вторичного облака</td>
+                    <td><input type="number" name="" id="L6"></td>
+                    <td><input type="number" name="" id="L6_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L6_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество получивших амбулаторную помощь (чел.)</td>
+                    <td><input type="number" name="" id="L7"></td>
+                    <td><input type="number" name="" id="L7_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L7_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество размещенных в стационаре и реанимации (чел.)</td>
+                    <td><input type="number" name="" id="L8"></td>
+                    <td><input type="number" name="" id="L8_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L8_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество поражённой техники</td>
+                    <td><input type="number" name="" id="L9"></td>
+                    <td><input type="number" name="" id="L9_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L9_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество объемов и растворов для обеззараживания местности</td>
+                    <td><input type="number" name="" id="L10"></td>
+                    <td><input type="number" name="" id="L10_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L10_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество сил и средств для проведения авар.-спасательных работ</td>
+                    <td><input type="number" name="" id="L11"></td>
+                    <td><input type="number" name="" id="L11_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L11_norm"></td>
+                </tr>
+                <tr>
+                    <td>Эффективность системы оповещения</td>
+                    <td><input type="number" name="" id="L12"></td>
+                    <td><input type="number" name="" id="L12_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L12_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество людей в зоне поражения</td>
+                    <td><input type="number" name="" id="L13"></td>
+                    <td><input type="number" name="" id="L13_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L13_norm"></td>
+                </tr>
+                <tr>
+                    <td>Количество спасателей в зоне поражения</td>
+                    <td><input type="number" name="" id="L14"></td>
+                    <td><input type="number" name="" id="L14_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L14_norm"></td>
+                </tr>
+                <tr>
+                    <td>Развитость системы МЧС</td>
+                    <td><input type="number" name="" id="L15"></td>
+                    <td><input type="number" name="" id="L15_max"></td>
+                    <td><input type="number" name="" value="0.7" id="L15_norm"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 10px;">
+                <div>
+                    <button id="random">Заполнить случайными переменными</button>
+                    <input type="number" id="chanceInput" value="0.9" step="0.01" min="0" max="1">
+                </div>
+                <button id="saveValuesToJson">Сохранить значения</button>
+                <button id="loadValuesFromJson">Загрузить значения</button>
+                <button id="calculate" style="height: 50px;">Вычислить результат</button>
+            </div>
+            <h1 style="margin-top: 30px; margin-left: 20px">Последние результаты: </h1>
+            <div id="results" style="text-align: center; margin-top: 20px;">
+                <!-- Здесь будут отображаться графики -->
+            </div>
+        </div>
+
+        <div class="secondary-column">
+            <table style="border: 1px solid black; text-align: center;">
+                <caption>Возмущения</caption>
+                <tbody id="disturbancesTable">
+                    <!-- Строки возмущений будут генерироваться здесь -->
+                <tr>
+                    <td class="disturbance">
+                        <h4 style="margin-bottom: 20px; font-weight: 500">Уровень финансирования системы МЧС города</h4>
+                        R<sub>1</sub> = <input type="number" id="qa1">t<sup>3</sup> +
+                        <input type="number" id="qb1">t<sup>2</sup> +
+                        <input type="number" id="qc1">t +
+                        <input type="number" id="qd1">
+                    </td>
+                </tr><tr>
+                    <td class="disturbance">
+                        <h4 style="margin-bottom: 20px; font-weight: 500">Степень экономического развития города</h4>
+                        R<sub>2</sub> = <input type="number" id="qa2">t<sup>3</sup> +
+                        <input type="number" id="qb2">t<sup>2</sup> +
+                        <input type="number" id="qc2">t +
+                        <input type="number" id="qd2">
+                    </td>
+                </tr><tr>
+                    <td class="disturbance">
+                        <h4 style="margin-bottom: 20px; font-weight: 500">Степень экономического развития города</h4>
+                        R<sub>3</sub> = <input type="number" id="qa3">t<sup>3</sup> +
+                        <input type="number" id="qb3">t<sup>2</sup> +
+                        <input type="number" id="qc3">t +
+                        <input type="number" id="qd3">
+                    </td>
+                </tr><tr>
+                    <td class="disturbance">
+                        <h4 style="margin-bottom: 20px; font-weight: 500">Доля современного оборудования на предприятии</h4>
+                        R<sub>4</sub> = <input type="number" id="qa4">t<sup>3</sup> +
+                        <input type="number" id="qb4">t<sup>2</sup> +
+                        <input type="number" id="qc4">t +
+                        <input type="number" id="qd4">
+                    </td>
+                </tr></tbody>
+            </table>
+            <table style="border: 1px solid black; text-align: center;">
+                <caption>Уравнения</caption>
+                <tbody id="equationsTable">
+                    <!-- Строки уравнений будут генерироваться здесь -->
+                <tr>
+                    <td class="equation">
+                        f<sub>1</sub> = <input type="number" id="a1">K<sub>10</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b1">K<sub>10</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c1">K<sub>10</sub>(t) +
+                        <input type="number" id="d1">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>2</sub> = <input type="number" id="a2">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b2">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c2">K<sub>11</sub>(t) +
+                        <input type="number" id="d2">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>3</sub> = <input type="number" id="a3">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b3">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c3">K<sub>14</sub>(t) +
+                        <input type="number" id="d3">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>4</sub> = <input type="number" id="a4">K<sub>3</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b4">K<sub>3</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c4">K<sub>3</sub>(t) +
+                        <input type="number" id="d4">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>5</sub> = <input type="number" id="a5">K<sub>7</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b5">K<sub>7</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c5">K<sub>7</sub>(t) +
+                        <input type="number" id="d5">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>6</sub> = <input type="number" id="a6">K<sub>8</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b6">K<sub>8</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c6">K<sub>8</sub>(t) +
+                        <input type="number" id="d6">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>7</sub> = <input type="number" id="a7">K<sub>9</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b7">K<sub>9</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c7">K<sub>9</sub>(t) +
+                        <input type="number" id="d7">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>8</sub> = <input type="number" id="a8">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b8">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c8">K<sub>13</sub>(t) +
+                        <input type="number" id="d8">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>9</sub> = <input type="number" id="a9">K<sub>10</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b9">K<sub>10</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c9">K<sub>10</sub>(t) +
+                        <input type="number" id="d9">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>10</sub> = <input type="number" id="a10">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b10">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c10">K<sub>11</sub>(t) +
+                        <input type="number" id="d10">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>11</sub> = <input type="number" id="a11">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b11">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c11">K<sub>14</sub>(t) +
+                        <input type="number" id="d11">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>12</sub> = <input type="number" id="a12">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b12">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c12">K<sub>15</sub>(t) +
+                        <input type="number" id="d12">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>13</sub> = <input type="number" id="a13">K<sub>1</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b13">K<sub>1</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c13">K<sub>1</sub>(t) +
+                        <input type="number" id="d13">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>14</sub> = <input type="number" id="a14">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b14">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c14">K<sub>15</sub>(t) +
+                        <input type="number" id="d14">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>15</sub> = <input type="number" id="a15">K<sub>1</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b15">K<sub>1</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c15">K<sub>1</sub>(t) +
+                        <input type="number" id="d15">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>16</sub> = <input type="number" id="a16">K<sub>1</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b16">K<sub>1</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c16">K<sub>1</sub>(t) +
+                        <input type="number" id="d16">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>17</sub> = <input type="number" id="a17">K<sub>4</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b17">K<sub>4</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c17">K<sub>4</sub>(t) +
+                        <input type="number" id="d17">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>18</sub> = <input type="number" id="a18">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b18">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c18">K<sub>11</sub>(t) +
+                        <input type="number" id="d18">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>19</sub> = <input type="number" id="a19">K<sub>12</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b19">K<sub>12</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c19">K<sub>12</sub>(t) +
+                        <input type="number" id="d19">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>20</sub> = <input type="number" id="a20">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b20">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c20">K<sub>14</sub>(t) +
+                        <input type="number" id="d20">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>21</sub> = <input type="number" id="a21">K<sub>5</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b21">K<sub>5</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c21">K<sub>5</sub>(t) +
+                        <input type="number" id="d21">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>22</sub> = <input type="number" id="a22">K<sub>6</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b22">K<sub>6</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c22">K<sub>6</sub>(t) +
+                        <input type="number" id="d22">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>23</sub> = <input type="number" id="a23">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b23">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c23">K<sub>13</sub>(t) +
+                        <input type="number" id="d23">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>24</sub> = <input type="number" id="a24">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b24">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c24">K<sub>15</sub>(t) +
+                        <input type="number" id="d24">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>25</sub> = <input type="number" id="a25">K<sub>5</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b25">K<sub>5</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c25">K<sub>5</sub>(t) +
+                        <input type="number" id="d25">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>26</sub> = <input type="number" id="a26">K<sub>6</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b26">K<sub>6</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c26">K<sub>6</sub>(t) +
+                        <input type="number" id="d26">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>27</sub> = <input type="number" id="a27">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b27">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c27">K<sub>11</sub>(t) +
+                        <input type="number" id="d27">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>28</sub> = <input type="number" id="a28">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b28">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c28">K<sub>13</sub>(t) +
+                        <input type="number" id="d28">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>29</sub> = <input type="number" id="a29">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b29">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c29">K<sub>14</sub>(t) +
+                        <input type="number" id="d29">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>30</sub> = <input type="number" id="a30">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b30">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c30">K<sub>15</sub>(t) +
+                        <input type="number" id="d30">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>31</sub> = <input type="number" id="a31">K<sub>3</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b31">K<sub>3</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c31">K<sub>3</sub>(t) +
+                        <input type="number" id="d31">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>32</sub> = <input type="number" id="a32">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b32">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c32">K<sub>13</sub>(t) +
+                        <input type="number" id="d32">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>33</sub> = <input type="number" id="a33">K<sub>10</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b33">K<sub>10</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c33">K<sub>10</sub>(t) +
+                        <input type="number" id="d33">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>34</sub> = <input type="number" id="a34">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b34">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c34">K<sub>11</sub>(t) +
+                        <input type="number" id="d34">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>35</sub> = <input type="number" id="a35">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b35">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c35">K<sub>14</sub>(t) +
+                        <input type="number" id="d35">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>36</sub> = <input type="number" id="a36">K<sub>3</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b36">K<sub>3</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c36">K<sub>3</sub>(t) +
+                        <input type="number" id="d36">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>37</sub> = <input type="number" id="a37">K<sub>9</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b37">K<sub>9</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c37">K<sub>9</sub>(t) +
+                        <input type="number" id="d37">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>38</sub> = <input type="number" id="a38">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b38">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c38">K<sub>15</sub>(t) +
+                        <input type="number" id="d38">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>39</sub> = <input type="number" id="a39">K<sub>3</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b39">K<sub>3</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c39">K<sub>3</sub>(t) +
+                        <input type="number" id="d39">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>40</sub> = <input type="number" id="a40">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b40">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c40">K<sub>13</sub>(t) +
+                        <input type="number" id="d40">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>41</sub> = <input type="number" id="a41">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b41">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c41">K<sub>14</sub>(t) +
+                        <input type="number" id="d41">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>42</sub> = <input type="number" id="a42">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b42">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c42">K<sub>15</sub>(t) +
+                        <input type="number" id="d42">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>43</sub> = <input type="number" id="a43">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b43">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c43">K<sub>11</sub>(t) +
+                        <input type="number" id="d43">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>44</sub> = <input type="number" id="a44">K<sub>12</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b44">K<sub>12</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c44">K<sub>12</sub>(t) +
+                        <input type="number" id="d44">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>45</sub> = <input type="number" id="a45">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b45">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c45">K<sub>14</sub>(t) +
+                        <input type="number" id="d45">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>46</sub> = <input type="number" id="a46">K<sub>15</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b46">K<sub>15</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c46">K<sub>15</sub>(t) +
+                        <input type="number" id="d46">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>47</sub> = <input type="number" id="a47">K<sub>2</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b47">K<sub>2</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c47">K<sub>2</sub>(t) +
+                        <input type="number" id="d47">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>48</sub> = <input type="number" id="a48">K<sub>3</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b48">K<sub>3</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c48">K<sub>3</sub>(t) +
+                        <input type="number" id="d48">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>49</sub> = <input type="number" id="a49">K<sub>11</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b49">K<sub>11</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c49">K<sub>11</sub>(t) +
+                        <input type="number" id="d49">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>50</sub> = <input type="number" id="a50">K<sub>12</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b50">K<sub>12</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c50">K<sub>12</sub>(t) +
+                        <input type="number" id="d50">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>51</sub> = <input type="number" id="a51">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b51">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c51">K<sub>13</sub>(t) +
+                        <input type="number" id="d51">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>52</sub> = <input type="number" id="a52">K<sub>2</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b52">K<sub>2</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c52">K<sub>2</sub>(t) +
+                        <input type="number" id="d52">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>53</sub> = <input type="number" id="a53">K<sub>3</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b53">K<sub>3</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c53">K<sub>3</sub>(t) +
+                        <input type="number" id="d53">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>54</sub> = <input type="number" id="a54">K<sub>13</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b54">K<sub>13</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c54">K<sub>13</sub>(t) +
+                        <input type="number" id="d54">
+                    </td>
+                </tr><tr>
+                    <td class="equation">
+                        f<sub>55</sub> = <input type="number" id="a55">K<sub>14</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b55">K<sub>14</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c55">K<sub>14</sub>(t) +
+                        <input type="number" id="d55">
+                    </td>
+                </tr></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const resultDiv = document.getElementById("results");
+
+            // Получаем результаты из localStorage
+            const savedResults = JSON.parse(localStorage.getItem("savedResults")) || { results: [] };
+
+            // Перебираем результаты в обратном порядке и добавляем их в DOM
+            savedResults.results.reverse().forEach(result => {
+                const resultItem = `
+                    <div class="result-item">
+                        <img src="data:image/png;base64,${result.img1}" alt="График 1">
+                        <img src="data:image/png;base64,${result.img2}" alt="График 2">
+                    </div>
+                `;
+                resultDiv.innerHTML += resultItem;
+            });
+        });
+    </script>
+    <script>
+        const numberOfDisturbances = 5; // Количество возмущений
+        const numberOfEquations = 55; // Количество уравнений
+
+        async function loadVariables() {
+            try {
+                // Fetch JSON from the server
+                const response = await fetch('/get-json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.functionsInfo;
+            } catch (error) {
+                console.error('Error loading JSON:', error);
+                return [];
+            }
+        }
+
+        async function generateEquations() {
+            const equationsTable = document.getElementById('equationsTable');
+
+            const functionsInfo = await loadVariables();
+
+            functionsInfo.forEach((func, index) => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td class="equation">
+                        f<sub>${index + 1}</sub> = <input type="number" id="a${index + 1}">K<sub>${func.variable}</sub>(t)<sup>3</sup> +
+                        <input type="number" id="b${index + 1}">K<sub>${func.variable}</sub>(t)<sup>2</sup> +
+                        <input type="number" id="c${index + 1}">K<sub>${func.variable}</sub>(t) +
+                        <input type="number" id="d${index + 1}">
+                    </td>
+                `;
+                equationsTable.appendChild(row);
+            });
+        }
+
+        function generateDisturbances() {
+            const disturbanceTable = document.getElementById('disturbancesTable');
+
+            function disturbanceTemplate(title, seq) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="disturbance">
+                        <h4 style="margin-bottom: 20px; font-weight: 500">${title}</h3>
+                        R<sub>${seq}</sub> = <input type="number" id="qa${seq}">t<sup>3</sup> +
+                        <input type="number" id="qb${seq}">t<sup>2</sup> +
+                        <input type="number" id="qc${seq}">t +
+                        <input type="number" id="qd${seq}">
+                    </td>
+                `;
+                disturbanceTable.appendChild(row);
+            }
+            disturbanceTemplate("Уровень финансирования системы МЧС города", 1);
+            disturbanceTemplate("Степень экономического развития города", 2);
+            disturbanceTemplate("Степень экономического развития города", 3);
+            disturbanceTemplate("Доля современного оборудования на предприятии", 4);
+        }
+
+        // Генерируем строки уравнений при загрузке страницы
+        document.addEventListener('DOMContentLoaded', generateEquations);
+        document.addEventListener('DOMContentLoaded', generateDisturbances);
+    </script>
+    <script>
+        document.getElementById("random").addEventListener("click", randomizeValues);
+        function randomizeValues() {
+            const chanceInput = document.getElementById("chanceInput").value;
+            const zeroChance = parseFloat(chanceInput);
+
+            function getRandomValue() {
+                return Math.random();
+            }
+
+            function getConditionalRandom() {
+                return Math.random() > zeroChance ? getRandomValue() : 0.0;
+            }
+
+            for (let i = 1; i <= 15; i++) {
+                let randVal = getRandomValue().toFixed(2);
+                document.getElementById(`L${i}`).value = randVal;
+                document.getElementById(`L${i}_max`).value = randVal * 1.25;
+            }
+
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`qa${i}`).value = getConditionalRandom().toFixed(2)
+                document.getElementById(`qb${i}`).value = getConditionalRandom().toFixed(2)
+                document.getElementById(`qc${i}`).value = getConditionalRandom().toFixed(2)
+                document.getElementById(`qd${i}`).value = getConditionalRandom().toFixed(2)
+            }
+
+            for (let i = 1; i <= 55; i++) {
+                document.getElementById(`a${i}`).value = getConditionalRandom().toFixed(2)
+                document.getElementById(`b${i}`).value = getConditionalRandom().toFixed(2)
+                document.getElementById(`c${i}`).value = getConditionalRandom().toFixed(2)
+                document.getElementById(`d${i}`).value = getConditionalRandom().toFixed(2)
+            }
+        }
+    </script>
+    <script>
+        document.getElementById("calculate").addEventListener("click", function() {
+            const formData = new FormData();
+
+            // Собираем значения L1-L15 (startValues) как числа
+            const startValues = [];
+            for (let i = 1; i <= 15; i++) {
+                const value = parseFloat(document.getElementById(`L${i}`).value) || 0;
+                startValues.push(value);
+            }
+            formData.append('startValues', JSON.stringify(startValues));
+
+            // Собираем значения L1-L15 MAX (maxValues) как числа
+            const maxValues = [];
+            for (let i = 1; i <= 15; i++) {
+                const value = parseFloat(document.getElementById(`L${i}_max`).value) || 0;
+                maxValues.push(value);
+            }
+            formData.append('maxValues', JSON.stringify(maxValues));
+
+            // Собираем значения L1-L15 norm (normValues) как числа
+            const normValues = [];
+            for (let i = 1; i <= 15; i++) {
+                const value = parseFloat(document.getElementById(`L${i}_norm`).value) || 0;
+                normValues.push(value);
+            }
+            formData.append('normValues', JSON.stringify(normValues));
+
+            // Собираем коэффициенты уравнений a1, b1, c1, d1 и т.д. как числа
+            const qcoefs = [];
+            for (let i = 1; i <= 4; i++) {
+                const qa = parseFloat(document.getElementById(`qa${i}`).value) || 0;
+                const qb = parseFloat(document.getElementById(`qb${i}`).value) || 0;
+                const qc = parseFloat(document.getElementById(`qc${i}`).value) || 0;
+                const qd = parseFloat(document.getElementById(`qd${i}`).value) || 0;
+                qcoefs.push([qa, qb, qc, qd]);
+            }
+            formData.append('qcoefs', JSON.stringify(qcoefs));
+
+            // Собираем коэффициенты уравнений a1, b1, c1, d1 и т.д. как числа
+            const coefs = [];
+            for (let i = 1; i <= 55; i++) {
+                const a = parseFloat(document.getElementById(`a${i}`).value) || 0;
+                const b = parseFloat(document.getElementById(`b${i}`).value) || 0;
+                const c = parseFloat(document.getElementById(`c${i}`).value) || 0;
+                const d = parseFloat(document.getElementById(`d${i}`).value) || 0;
+                coefs.push([a, b, c, d]);
+            }
+            formData.append('coefs', JSON.stringify(coefs));
+
+            fetch("/calculate/", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById("results");
+
+                // Форматируем новый результат
+                const newResult = `
+                    <div class="result-item">
+                        <img src="data:image/png;base64,${data.image1}" alt="График 1">
+                        <img src="data:image/png;base64,${data.image2}" alt="График 2">
+                    </div>
+                `;
+
+                // Добавляем новый результат в начало
+                resultDiv.innerHTML = newResult + resultDiv.innerHTML;
+
+                // Работа с localStorage
+                const savedResults = JSON.parse(localStorage.getItem("savedResults")) || { results: [] };
+
+                // Добавляем новые изображения в localStorage
+                savedResults.results.unshift({ img1: data.image1, img2: data.image2 });
+
+                // Ограничиваем количество сохраненных результатов (например, до 10)
+                if (savedResults.results.length > 10) {
+                    savedResults.results.pop();
+                }
+
+                // Сохраняем обновленный список в localStorage
+                localStorage.setItem("savedResults", JSON.stringify(savedResults));
+            })
+            .catch(error => console.error('Ошибка:', error));
+        });
+    </script>
+    <script>
+        document.getElementById("saveValuesToJson").addEventListener("click", function saveToJson() {
+            // Собираем значения L1-L15 (startValues) как числа
+            const startValues = [];
+            for (let i = 1; i <= 15; i++) {
+                const value = parseFloat(document.getElementById(`L${i}`).value) || 0;
+                startValues.push(value);
+            }
+
+            // Собираем значения L1-L15 MAX (maxValues) как числа
+            const maxValues = [];
+            for (let i = 1; i <= 15; i++) {
+                const value = parseFloat(document.getElementById(`L${i}_max`).value) || 0;
+                maxValues.push(value);
+            }
+
+            // Собираем значения L1-L15 norm (normValues) как числа
+            const normValues = [];
+            for (let i = 1; i <= 15; i++) {
+                const value = parseFloat(document.getElementById(`L${i}_norm`).value) || 0;
+                normValues.push(value);
+            }
+
+            // Собираем коэффициенты уравнений a1, b1, c1, d1 и т.д. как числа
+            const qcoefs = [];
+            for (let i = 1; i <= 4; i++) {
+                const a = parseFloat(document.getElementById(`qa${i}`).value) || 0;
+                const b = parseFloat(document.getElementById(`qb${i}`).value) || 0;
+                const c = parseFloat(document.getElementById(`qc${i}`).value) || 0;
+                const d = parseFloat(document.getElementById(`qd${i}`).value) || 0;
+                coefs.push([a, b, c, d]);
+            }
+
+            // Собираем коэффициенты уравнений a1, b1, c1, d1 и т.д. как числа
+            const coefs = [];
+            for (let i = 1; i <= 55; i++) {
+                const a = parseFloat(document.getElementById(`a${i}`).value) || 0;
+                const b = parseFloat(document.getElementById(`b${i}`).value) || 0;
+                const c = parseFloat(document.getElementById(`c${i}`).value) || 0;
+                const d = parseFloat(document.getElementById(`d${i}`).value) || 0;
+                coefs.push([a, b, c, d]);
+            }
+
+            // Создаем объект для сохранения
+            const data = {
+                startValues,
+                maxValues,
+                coefs,
+                qcoefs,
+                normValues
+            };
+
+            // Преобразуем объект в JSON строку
+            const jsonData = JSON.stringify(data, null, 2);
+
+            // Создаем Blob и ссылку для скачивания
+            const blob = new Blob([jsonData], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            // Создаем временную ссылку и инициируем скачивание
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "data.json"; // Название файла
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        })
+    </script>
+    <script>
+        function loadFromJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const jsonData = JSON.parse(e.target.result);
+
+                // Заполнение значений в полях
+                jsonData.startValues.forEach((value, index) => {
+                    document.getElementById(`L${index + 1}`).value = value;
+                });
+
+                jsonData.maxValues.forEach((value, index) => {
+                    document.getElementById(`L${index + 1}_max`).value = value;
+                });
+
+                jsonData.normValues.forEach((value, index) => {
+                    document.getElementById(`L${index + 1}_norm`).value = value;
+                });
+
+                jsonData.coefs.forEach((coef, index) => {
+                    document.getElementById(`a${index + 1}`).value = coef[0];
+                    document.getElementById(`b${index + 1}`).value = coef[1];
+                    document.getElementById(`c${index + 1}`).value = coef[2];
+                    document.getElementById(`d${index + 1}`).value = coef[3];
+                });
+
+                jsonData.qcoefs.forEach((coef, index) => {
+                    document.getElementById(`qa${index + 1}`).value = coef[0];
+                    document.getElementById(`qb${index + 1}`).value = coef[1];
+                    document.getElementById(`qc${index + 1}`).value = coef[2];
+                    document.getElementById(`qd${index + 1}`).value = coef[3];
+                });
+
+                // Удаляем временный input
+                event.target.remove();
+            };
+
+            reader.readAsText(file);
+        }
+        document.getElementById('loadValuesFromJson').addEventListener('click', function() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.onchange = loadFromJson;
+            fileInput.style.width = 0;
+            document.body.appendChild(fileInput); // Добавляем в DOM, чтобы его можно было использовать
+            fileInput.click();
+        });
+    </script>
+
+
+<div id="ambiance-notification"></div></body></html>
