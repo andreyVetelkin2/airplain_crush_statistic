@@ -273,6 +273,27 @@ async def calculate(
             polynomial_coefs=polynomial_coefs
         )
         
+        # Отладочный вывод для проверки значений
+        print(f"\n{'='*60}")
+        print(f"ОТЛАДОЧНАЯ ИНФОРМАЦИЯ О РАСЧЁТЕ")
+        print(f"{'='*60}")
+        print(f"Период расчёта: от {results['time'][0]:.2f} до {results['time'][-1]:.2f} лет")
+        print(f"Количество точек: {len(results['time'])}")
+        print(f"\nРеальные значения переменных (до нормализации):")
+        print(f"{'Переменная':<12} {'Минимум':<12} {'Максимум':<12} {'Начало':<12} {'Конец':<12} {'Изменение'}")
+        print(f"{'-'*60}")
+        
+        for var in ['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8']:
+            values = results[var]
+            min_val = min(values)
+            max_val = max(values)
+            start_val = values[0]
+            end_val = values[-1]
+            change = end_val - start_val
+            print(f"{var:<12} {min_val:<12.4f} {max_val:<12.4f} {start_val:<12.4f} {end_val:<12.4f} {change:+.4f}")
+        
+        print(f"{'='*60}\n")
+        
         # Генерируем машинные графики
         image1 = generate_machine_coordinates_linear(results)
         image2 = generate_machine_coordinates_radar(results)
