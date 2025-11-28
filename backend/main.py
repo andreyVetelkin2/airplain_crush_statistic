@@ -173,6 +173,51 @@ async def health_check():
     return {"status": "ok", "message": "API работает нормально"}
 
 
+def plot_dtp_to_base64(results: Dict) -> str:
+    """
+    Использует логику plot_dtp из test.py для генерации графика.
+    Возвращает base64 строку изображения.
+    """
+    base_year = 2011
+    time_values = base_year + np.array(results['time'])
+    
+    variable_names = {
+        'X1': 'X1 - Нарушения',
+        'X2': 'X2 - Катастрофы',
+        'X3': 'X3 - Повторяемость',
+        'X4': 'X4 - Частные суда',
+        'X5': 'X5 - Метеослужбы',
+        'X6': 'X6 - Контроль контрафакта',
+        'X7': 'X7 - Возраст судов',
+        'X8': 'X8 - Квалификация'
+    }
+    
+    data = {}
+    for var in ['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8']:
+        data[variable_names[var]] = results[var]
+    
+    years = time_values.tolist()
+    
+    plt.figure(figsize=(14, 8))
+    plt.grid(True, alpha=0.3)
+    
+    for label, values in data.items():
+        plt.plot(years, values, marker='o', linewidth=2, label=label)
+    
+    plt.xlabel("Годы")
+    plt.ylabel("Значения основных показателей безопасности ДТП")
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=9)
+    plt.tight_layout()
+    
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png', dpi=120, bbox_inches='tight', facecolor='white')
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode()
+    plt.close()
+    
+    return image_base64
+
+
 @app.post("/calculate/")
 async def calculate(
     startValues: str = Form(...),
@@ -252,7 +297,7 @@ async def calculate(
 
         print(f"{'='*60}\n")
 
-        image1 = generate_machine_coordinates_linear(results)
+        image1 = plot_dtp_to_base64(results)
         image2 = generate_machine_coordinates_radar(results)
 
         return {
