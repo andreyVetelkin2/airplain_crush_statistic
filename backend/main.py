@@ -205,7 +205,7 @@ def plot_dtp_to_base64(results: Dict) -> str:
         plt.plot(years, values, marker='o', linewidth=2, label=label)
     
     plt.xlabel("Годы")
-    plt.ylabel("Значения основных показателей безопасности ДТП")
+    plt.ylabel("Значения основных показателей")
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=9)
     plt.tight_layout()
     
