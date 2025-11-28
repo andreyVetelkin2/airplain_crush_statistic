@@ -134,6 +134,15 @@ table input[type="number"] {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.zoomable-image {
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+}
+
+.zoomable-image:hover {
+    transform: scale(1.01);
+}
+
 .result-item .img-fluid {
     width: 100%;
 }
@@ -252,4 +261,54 @@ sub, sup {
 caption {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.image-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1050;
+}
+
+.image-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.image-modal img {
+    max-width: 95vw;
+    max-height: 90vh;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 3px solid #fff;
+}
+
+.image-modal__close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    padding: 5px 12px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.image-modal__close:hover {
+    background: rgba(0, 0, 0, 0.8);
 }

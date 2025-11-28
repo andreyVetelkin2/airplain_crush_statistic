@@ -15,6 +15,7 @@ function setupEventListeners() {
     document.getElementById("saveValuesToJson").addEventListener("click", saveValuesToJson);
     document.getElementById("loadValuesFromJson").addEventListener("click", loadValuesFromJson);
     document.getElementById("calculate").addEventListener("click", calculate);
+    setupImageZoom();
 }
 
 // Функция случайного заполнения
@@ -276,14 +277,14 @@ async function calculate() {
                 <h3 class="text-center mt-3 mb-3">Линейный график</h3>
                 <div class="row">
                     <div class="col-md-12">
-                        <img src="data:image/png;base64,${data.image1}" alt="Машинные координаты" class="img-fluid">
+                        <img src="data:image/png;base64,${data.image1}" alt="Машинные координаты" class="img-fluid zoomable-image js-zoomable">
                         <p class="text-center"><small>График: Зависимость машинных координат от времени (ось Y: 0-1, ось X: 0-конец расчётов)</small></p>
                     </div>
                 </div>
                 <h3 class="text-center mt-4 mb-3">Радиальные диаграммы для шагов координат</h3>
                 <div class="row">
                     <div class="col-md-12">
-                        <img src="data:image/png;base64,${data.image2}" alt="Радиальные диаграммы" class="img-fluid">
+                        <img src="data:image/png;base64,${data.image2}" alt="Радиальные диаграммы" class="img-fluid zoomable-image js-zoomable">
                         <p class="text-center"><small>6 радиальных диаграмм для координат: 0.0, 0.2, 0.4, 0.6, 0.8, 1.0</small></p>
                     </div>
                 </div>
@@ -308,4 +309,50 @@ async function calculate() {
 function clearPreviousResults() {
     const resultDiv = document.getElementById("results");
     resultDiv.innerHTML = '<p class="text-muted">Выполните расчет для отображения графиков машинного времени и координат.</p>';
+}
+
+function setupImageZoom() {
+    const resultsContainer = document.getElementById("results");
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("imageModalImg");
+    const closeBtn = document.getElementById("imageModalClose");
+
+    if (!resultsContainer || !modal || !modalImg || !closeBtn) {
+        return;
+    }
+
+    const closeModal = () => {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+    };
+
+    const openModal = (src, alt) => {
+        modalImg.src = src;
+        modalImg.alt = alt || "Увеличенное изображение";
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+    };
+
+    resultsContainer.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target && target.classList.contains("js-zoomable")) {
+            openModal(target.src, target.alt);
+        }
+    });
+
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("open")) {
+            closeModal();
+        }
+    });
 }
