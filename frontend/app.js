@@ -20,25 +20,30 @@ function setupEventListeners() {
 
 // Функция случайного заполнения
 function randomizeValues() {
-    const chanceInput = document.getElementById("chanceInput").value;
-    const zeroChance = parseFloat(chanceInput);
+    const probInput = parseFloat(document.getElementById("chanceInput").value);
+    const probNonZero = (isNaN(probInput) ? 0.9 : Math.min(Math.max(probInput, 0), 1));
 
-    function getRandomValue() {
+    const MIN_NONZERO = 0.05;
+
+    function randUnit() {
         return Math.random();
     }
 
+    function randNonZero() {
+        return MIN_NONZERO + (1 - MIN_NONZERO) * Math.random();
+    }
+
     function getConditionalRandom() {
-        return Math.random() > zeroChance ? getRandomValue() : 0.0;
+        return Math.random() < probNonZero ? randNonZero() : 0.0;
     }
 
-    // Заполняем переменные X1-X8
     for (let i = 1; i <= NUM_VARIABLES; i++) {
-        let randVal = getRandomValue().toFixed(2);
-        document.getElementById(`X${i}`).value = randVal;
-        document.getElementById(`X${i}_max`).value = (randVal * 1.25).toFixed(2);
+        const val = randNonZero();
+        // показываем с двумя знаками в UI, но числовая генерация остаётся корректной
+        document.getElementById(`X${i}`).value = val.toFixed(2);
+        document.getElementById(`X${i}_max`).value = (val * 1.25).toFixed(2);
     }
 
-    // Заполняем коэффициенты возмущений F1-F5
     for (let i = 1; i <= NUM_DISTURBANCES; i++) {
         document.getElementById(`qa${i}`).value = getConditionalRandom().toFixed(2);
         document.getElementById(`qb${i}`).value = getConditionalRandom().toFixed(2);
@@ -46,8 +51,8 @@ function randomizeValues() {
         document.getElementById(`qd${i}`).value = getConditionalRandom().toFixed(2);
     }
 
-    // Заполняем коэффициенты уравнений f1-f20
     for (let i = 1; i <= NUM_EQUATIONS; i++) {
+        // можно чуть увеличить MIN_NONZERO для коэффициентов уравнений, но для простоты используем getConditionalRandom()
         document.getElementById(`a${i}`).value = getConditionalRandom().toFixed(2);
         document.getElementById(`b${i}`).value = getConditionalRandom().toFixed(2);
         document.getElementById(`c${i}`).value = getConditionalRandom().toFixed(2);
